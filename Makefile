@@ -29,7 +29,7 @@ build:
 
 .PHONY: redis
 redis:
-	docker run --detach --restart=on-failure:10 redis
+	docker run --detach --name redis --restart=on-failure:10 redis
 
 .PHONY: indexer
 indexer:
