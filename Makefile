@@ -27,13 +27,17 @@ test:
 build:
 	docker build --tag $(IMAGE) .
 
+.PHONY: redis
+redis:
+	docker run --detach --restart=on-failure:10 redis
+
 .PHONY: indexer
 indexer:
-	echo docker run --detach --name $(NAME) $(log_indexer_flags) $(IMAGE)
+	docker run --detach --name $(NAME) $(log_indexer_flags) $(IMAGE)
 
 .PHONY: shipper
 shipper:
-	echo docker run --detach --name $(NAME) $(log_shipper_flags) $(IMAGE)
+	docker run --detach --name $(NAME) $(log_shipper_flags) $(IMAGE)
 
 .PHONY: shell
 shell:

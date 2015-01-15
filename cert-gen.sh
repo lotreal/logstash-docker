@@ -12,6 +12,7 @@ if [ ! -d "${PKI_DIR}" ]; then
 
   wget https://github.com/driskell/log-courier/raw/develop/src/lc-tlscert/lc-tlscert.go
   docker run --rm -v "$(pwd)":/usr/src/myapp -w /usr/src/myapp golang go build -v lc-tlscert.go
+  cd ..
 fi
 
 cd ${PKI_DIR}
