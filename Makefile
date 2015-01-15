@@ -33,11 +33,11 @@ redis:
 
 .PHONY: indexer
 indexer:
-	docker run --detach --name $(NAME) $(log_indexer_flags) $(IMAGE)
+	docker run --detach --name log-indexer $(log_indexer_flags) $(IMAGE)
 
 .PHONY: shipper
 shipper:
-	docker run --detach --name $(NAME) $(log_shipper_flags) $(IMAGE)
+	docker run --detach --name log-shipper $(log_shipper_flags) $(IMAGE)
 
 .PHONY: shell
 shell:
