@@ -3,25 +3,31 @@ BSDIR := $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
 # Sample: NAME=ls-shipper make run
 NAME ?= logstash
 IMAGE = lotreal/logstash:1.42
+CONFIG ?= etc/indexer.conf
 
-
-define log_indexer_flags
+define common_logstash_flags
+--name $(NAME) \
 --link redis:redis \
---link es:es \
---volume $(BSDIR)/etc/indexer.conf:/etc/logstash.conf
+--volume $(BSDIR)/$(CONFIG):/etc/logstash.conf
 endef
 
 define log_shipper_flags
+$(common_logstash_flags) \
+$(DFLAGS)
+endef
+
+define log_indexer_flags
+--name $(NAME) \
 --link redis:redis \
---expose 5043/tcp \
---volume $(BSDIR)/cert:/opt/ssl \
---volume $(BSDIR)/etc/shipper.conf:/etc/logstash.conf
+--link es:es \
+--volume $(BSDIR)/$(CONFIG):/etc/logstash.conf \
+$(DFLAGS)
 endef
 
 
 .PHONY: test
 test:
-	docker run --rm -it $(log_indexer_flags) $(IMAGE) bash
+	echo docker run --rm -it $(logstash_flags) $(IMAGE) bash
 
 .PHONY: build
 build:
@@ -37,7 +43,7 @@ indexer:
 
 .PHONY: shipper
 shipper:
-	docker run --detach --name log-shipper $(log_shipper_flags) $(IMAGE)
+	docker run --detach $(log_shipper_flags) $(IMAGE)
 
 .PHONY: shell
 shell:

@@ -1,0 +1,3 @@
+cert/lc-tlscert
+cert/logstash-forwarder.crt
+cert/logstash-forwarder.key

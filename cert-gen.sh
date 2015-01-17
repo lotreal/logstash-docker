@@ -14,7 +14,7 @@ cd ${PKI_DIR}
 
 docker run --rm -v "$(pwd)":/usr/src/myapp -w /usr/src/myapp golang go build -v lc-tlscert.go
 
-echo -e "\n127.0.0.1\n\n3650\n" | ./lc-tlscert
+echo -e "\n$1\n\n3650\n" | ./lc-tlscert
 
 mv selfsigned.key logstash-forwarder.key
 mv selfsigned.crt logstash-forwarder.crt
