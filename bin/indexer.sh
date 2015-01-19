@@ -1,3 +1,3 @@
 #!/bin/bash
-PWD=$(cd "$(dirname "$0")"; pwd)
+cd "$(dirname "$0")/.."
 make indexer NAME=log-indexer
