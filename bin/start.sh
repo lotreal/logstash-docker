@@ -5,6 +5,7 @@ PWD=$(cd "$(dirname "$0")"; pwd)
 
 make redis
 
-./collectd-shipper.sh
-./lumberjack-shipper.sh
-./indexer.sh
+NAME=log-collectd TYPE=collectd make pull run
+NAME=log-forwarder TYPE=forwarder make pull run
+
+NAME=log-indexer TYPE=indexer make pull run

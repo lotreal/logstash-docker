@@ -4,30 +4,41 @@ BSDIR := $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
 NAME ?= logstash
 IMAGE = lotreal/logstash:1.42
 CONFIG ?= etc/indexer.conf
+TYPE ?= indexer
 
-define common_logstash_flags
+
+define lflags
 --name $(NAME) \
 --link redis:redis \
 --volume $(BSDIR)/$(CONFIG):/etc/logstash.conf
 endef
 
-define log_shipper_flags
-$(common_logstash_flags) \
-$(DFLAGS)
-endef
 
-define log_indexer_flags
---name $(NAME) \
---link redis:redis \
---link es:es \
---volume $(BSDIR)/$(CONFIG):/etc/logstash.conf \
-$(DFLAGS)
-endef
+ifeq ($(TYPE), indexer)
+CONFIG = etc/indexer.conf
+DFLAGS = $(lflags) --link es:es
+endif
+
+ifeq ($(TYPE), collectd)
+CONFIG = etc/shipper/collectd.conf
+DFLAGS = $(lflags) --publish 25826:25826/udp
+endif
+
+ifeq ($(TYPE), forwarder)
+CONFIG = etc/shipper/lumberjack.conf
+DFLAGS = $(lflags) --publish 5043:5043/tcp --volume $(pwd)/cert:/opt/ssl
+endif
 
 
 .PHONY: test
 test:
-	echo docker run --rm -it $(logstash_flags) $(IMAGE) bash
+	echo $(TYPE)
+	echo docker run --rm -it $(DFLAGS) $(IMAGE) bash
+
+.PHONY: clean
+clean:
+	echo docker rm -f $(NAME)
+
 
 .PHONY: build
 build:
@@ -37,13 +48,9 @@ build:
 redis:
 	docker run --detach --name redis --restart=on-failure:10 redis
 
-.PHONY: indexer
-indexer:
-	docker run --detach --name log-indexer $(log_indexer_flags) $(IMAGE)
-
-.PHONY: shipper
-shipper:
-	docker run --detach $(log_shipper_flags) $(IMAGE)
+.PHONY: run
+run:
+	docker run --detach $(DFLAGS) $(IMAGE)
 
 .PHONY: shell
 shell:
