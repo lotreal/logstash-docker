@@ -25,7 +25,7 @@ DFLAGS = $(lflags) --publish 25826:25826/udp
 endif
 
 ifeq ($(TYPE), forwarder)
-CONFIG = etc/shipper/lumberjack.conf
+CONFIG = etc/shipper/forwarder.conf
 DFLAGS = $(lflags) --publish 5043:5043/tcp --volume $(pwd)/cert:/opt/ssl
 endif
 
