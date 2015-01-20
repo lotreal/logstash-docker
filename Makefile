@@ -26,7 +26,7 @@ endif
 
 ifeq ($(TYPE), forwarder)
 CONFIG = etc/shipper/forwarder.conf
-DFLAGS = $(lflags) --publish 5043:5043/tcp --volume $(pwd)/cert:/opt/ssl
+DFLAGS = $(lflags) --publish 5043:5043/tcp --volume $(BSDIR)/cert:/opt/ssl
 endif
 
 
