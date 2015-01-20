@@ -30,6 +30,18 @@ DFLAGS = $(lflags) --publish 5043:5043/tcp --volume $(pwd)/cert:/opt/ssl
 endif
 
 
+.PHONY: build
+build:
+	docker build --tag $(IMAGE) .
+
+.PHONY: pull
+pull:
+	docker pull $(IMAGE)
+
+.PHONY: push
+push:
+	docker push $(IMAGE)
+
 .PHONY: test
 test:
 	echo $(TYPE)
@@ -37,12 +49,7 @@ test:
 
 .PHONY: clean
 clean:
-	echo docker rm -f $(NAME)
-
-
-.PHONY: build
-build:
-	docker build --tag $(IMAGE) .
+	docker rm -f $(NAME)
 
 .PHONY: redis
 redis:
