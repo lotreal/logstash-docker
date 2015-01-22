@@ -3,7 +3,7 @@ BSDIR := $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
 # Sample: NAME=ls-shipper make run
 NAME ?= logstash
 IMAGE = lotreal/logstash:1.42
-CONFIG ?= etc/indexer.conf
+# CONFIG ?= etc/indexer.conf
 TYPE ?= indexer
 
 
@@ -15,17 +15,17 @@ endef
 
 
 ifeq ($(TYPE), indexer)
-CONFIG = etc/indexer.conf
+CONFIG ?= etc/indexer.conf
 DFLAGS = $(lflags) --link es:es
 endif
 
 ifeq ($(TYPE), collectd)
-CONFIG = etc/shipper/collectd.conf
+CONFIG ?= etc/shipper/collectd.conf
 DFLAGS = $(lflags) --publish 25826:25826/udp
 endif
 
 ifeq ($(TYPE), forwarder)
-CONFIG = etc/shipper/forwarder.conf
+CONFIG ?= etc/shipper/forwarder.conf
 DFLAGS = $(lflags) --publish 5043:5043/tcp --volume $(BSDIR)/cert:/opt/ssl
 endif
 
@@ -49,7 +49,7 @@ test:
 
 .PHONY: clean
 clean:
-	docker rm -f $(NAME)
+	-docker rm -f $(NAME)
 
 .PHONY: redis
 redis:
@@ -58,6 +58,10 @@ redis:
 .PHONY: run
 run:
 	docker run --detach $(DFLAGS) $(IMAGE)
+
+.PHONY: it
+it:
+	docker run -it $(DFLAGS) $(IMAGE)
 
 .PHONY: shell
 shell:
